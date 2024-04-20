@@ -31,169 +31,170 @@ class _ColorSelectionScreenState extends State<ColorSelectionScreen> {
       appBar: AppBar(),
       body: Container(
         margin: const EdgeInsets.all(20),
-        child: Flex(
-          direction: Axis.horizontal,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Expanded(
-              flex: 1,
-              child: Container(
-                decoration: BoxDecoration(
-                    border: Border.all(
-                  color: Colors.black,
-                  width: 2,
-                )),
-                width: 50,
-                height: MediaQuery.of(context).size.height,
+        child: SingleChildScrollView(
+          child: Flex(
+            direction: Axis.horizontal,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                    color: Colors.black,
+                    width: 2,
+                  )),
+                  width: 50,
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.only(top: 40),
+                    separatorBuilder: (context, index) {
+                      return const SizedBox(height: 100);
+                    },
+                    itemCount: stripeList.length,
+                    itemBuilder: (context, index) {
+                      TestStripeModel model = stripeList[index];
+                      return Container(
+                        height: 20,
+                        width: 60,
+                        color: model.colorList
+                            .firstWhere(
+                              (element) => element.value == model.selectedValue,
+                              orElse: () => model.colorList.first,
+                            )
+                            .color,
+                      );
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                flex: 9,
                 child: ListView.separated(
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(height: 20);
+                  },
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  padding: const EdgeInsets.only(top: 70),
-                  separatorBuilder: (context, index) {
-                    return const SizedBox(height: 100);
-                  },
+                  padding: const EdgeInsets.only(top: 20),
                   itemCount: stripeList.length,
-                  itemBuilder: (context, index) {
-                    TestStripeModel model = stripeList[index];
-                    return Container(
-                      height: 20,
-                      width: 60,
-                      color: model.colorList
-                          .firstWhere(
-                            (element) => element.value == model.selectedValue,
-                            orElse: () => model.colorList.first,
-                          )
-                          .color,
+                  itemBuilder: (context, topIndex) {
+                    TestStripeModel model = stripeList[topIndex];
+                    return Flex(
+                      direction: Axis.vertical,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flex(
+                          direction: Axis.horizontal,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              model.name.toUpperCase(),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                              width: 60,
+                              child: TextField(
+                                key: ValueKey('$topIndex'),
+                                controller: controllerList[topIndex],
+                                onChanged: (value) =>
+                                    onValueChanged(topIndex, value),
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 3,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 3,
+                                    ),
+                                  ),
+                                  disabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 3,
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 3,
+                                    ),
+                                  ),
+                                  alignLabelWithHint: true,
+                                  contentPadding: EdgeInsets.all(10),
+                                ),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.grey,
+                                ),
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(4),
+                                ],
+                                textInputAction: TextInputAction.done,
+                                keyboardType: TextInputType.number,
+                                maxLines: 1,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ListView(
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            children: List.generate(
+                                model.colorList.length,
+                                (index) => Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 6),
+                                      child: InkWell(
+                                        onTap: () => onValueChanged(
+                                            topIndex,
+                                            model.colorList[index].value
+                                                .toString()),
+                                        child: Flex(
+                                          direction: Axis.vertical,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Container(
+                                              height: 20,
+                                              width: 50,
+                                              decoration: BoxDecoration(
+                                                  color: model
+                                                      .colorList[index].color,
+                                                  borderRadius:
+                                                      BorderRadius.circular(4)),
+                                            ),
+                                            Text(model.colorList[index].value
+                                                .toString()
+                                                .replaceAll(regex, ''))
+                                          ],
+                                        ),
+                                      ),
+                                    )).toList(),
+                          ),
+                        ),
+                      ],
                     );
                   },
                 ),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              flex: 9,
-              child: ListView.separated(
-                separatorBuilder: (context, index) {
-                  return const SizedBox(height: 20);
-                },
-                shrinkWrap: true,
-                physics: const ClampingScrollPhysics(),
-                padding: const EdgeInsets.only(top: 20),
-                itemCount: stripeList.length,
-                itemBuilder: (context, topIndex) {
-                  TestStripeModel model = stripeList[topIndex];
-                  return Flex(
-                    direction: Axis.vertical,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Flex(
-                        direction: Axis.horizontal,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            model.name.toUpperCase(),
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 30,
-                            width: 60,
-                            child: TextField(
-                              onChanged: (value) =>
-                                  onValueChanged(topIndex, value),
-                              controller: controllerList[topIndex],
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.grey,
-                                    width: 3,
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.grey,
-                                    width: 3,
-                                  ),
-                                ),
-                                disabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.grey,
-                                    width: 3,
-                                  ),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.grey,
-                                    width: 3,
-                                  ),
-                                ),
-                                alignLabelWithHint: true,
-                                contentPadding: EdgeInsets.all(10),
-                              ),
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.grey,
-                              ),
-                              inputFormatters: [
-                                LengthLimitingTextInputFormatter(3),
-                              ],
-                              key: ValueKey('$topIndex'),
-                              textInputAction: TextInputAction.done,
-                              keyboardType: TextInputType.number,
-                              maxLines: 1,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ListView(
-                          shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          children: List.generate(
-                              model.colorList.length,
-                              (index) => Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 6),
-                                    child: InkWell(
-                                      onTap: () => onValueChanged(
-                                          topIndex,
-                                          model.colorList[index].value
-                                              .toString()),
-                                      child: Flex(
-                                        direction: Axis.vertical,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Container(
-                                            height: 20,
-                                            width: 50,
-                                            decoration: BoxDecoration(
-                                                color: model
-                                                    .colorList[index].color,
-                                                borderRadius:
-                                                    BorderRadius.circular(4)),
-                                          ),
-                                          Text(model.colorList[index].value
-                                              .toString()
-                                              .replaceAll(regex, ''))
-                                        ],
-                                      ),
-                                    ),
-                                  )).toList(),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -203,8 +204,10 @@ class _ColorSelectionScreenState extends State<ColorSelectionScreen> {
     ColorModel colorModel = stripeList[index].colorList.firstWhere(
           (element) => double.tryParse(value) == element.value,
         );
-    stripeList[index].selectedValue = colorModel.value;
-    stripeList[index].SelectedColor = colorModel.color;
-    setState(() {});
+    if (colorModel != null) {
+      stripeList[index].selectedValue = colorModel.value;
+      stripeList[index].SelectedColor = colorModel.color;
+      setState(() {});
+    }
   }
 }

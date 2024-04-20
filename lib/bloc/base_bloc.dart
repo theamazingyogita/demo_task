@@ -69,7 +69,6 @@ class BaseBloc extends Bloc<BaseEvent, BaseState> {
 
   void _mapGetCategoryDataEventToState(
       GetCategoryDataEvent event, Emitter<BaseState> emit) async {
-    emit(state.copyWith(isLoading: true));
     const url = 'http://esptiles.imperoserver.in/api/API/Product/DashBoard';
     final Map<String, dynamic> requestBody = {
       "CategoryId": event.categoryId,
@@ -85,7 +84,6 @@ class BaseBloc extends Bloc<BaseEvent, BaseState> {
     );
 
     if (response.statusCode == 200) {
-      emit(state.copyWith(isLoading: false));
       BaseModel baseModel = BaseModel.fromJson(jsonDecode(response.body));
       final List<SubCategories> subCategoryList = state.subCategories.toList();
       final List<Category> categoryList = state.category.toList();
