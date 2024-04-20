@@ -25,12 +25,9 @@ class _BaseScreenState extends State<BaseView> with TickerProviderStateMixin {
         }
       },
       buildWhen: (previous, current) =>
-          previous.baseModel != current.baseModel ||
           previous.isLoading != current.isLoading ||
           previous.isTabChanged != current.isTabChanged ||
-          previous.currentCategoryId != current.currentCategoryId ||
           previous.currentIndex != current.currentIndex ||
-          previous.subCategories != current.subCategories ||
           previous.category != current.category,
       builder: (context, state) {
         _tabController =
@@ -39,56 +36,69 @@ class _BaseScreenState extends State<BaseView> with TickerProviderStateMixin {
           home: DefaultTabController(
             initialIndex: state.currentIndex,
             length: state.category.length,
-            child: Scaffold(
-              backgroundColor: Colors.black,
-              appBar: CustomAppBar(
-                backgroundColor: Colors.black,
-                bottom: state.category.isNotEmpty
-                    ? TabBar(
-                        isScrollable: true,
-                        physics: const ClampingScrollPhysics(),
-                        indicatorSize: TabBarIndicatorSize.label,
-                        dividerColor: Colors.transparent,
-                        indicatorColor: Colors.transparent,
-                        controller: _tabController,
-                        tabAlignment: TabAlignment.start,
-                        key: const ValueKey('tab_bar'),
-                        onTap: (index) {
-                          baseBloc.add(OnTapChangeTabEvent(index: index));
-                        },
-                        tabs: state.category
-                            .map((category) => Tab(
-                                    child: Text(
-                                  category.name.toString(),
-                                  style: TextStyle(
-                                    color: state.currentIndex ==
-                                            state.category.indexOf(category)
-                                        ? Colors.white
-                                        : Colors.grey,
-                                    fontSize: 16,
-                                  ),
-                                )))
-                            .toList(),
-                      )
-                    : null,
-              ),
-              body: Container(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(12),
-                        topLeft: Radius.circular(12))),
-                child: TabBarView(
-                  physics: const NeverScrollableScrollPhysics(),
-                  key: const ValueKey('tab_bar_key'),
-                  controller: _tabController,
-                  children: state.category
-                      .map((category) => const CategoryScreen())
-                      .toList(), // Pass the category data to CategoryScreen
+            child: Stack(
+              children: [
+                Scaffold(
+                  backgroundColor: Colors.black,
+                  appBar: CustomAppBar(
+                    backgroundColor: Colors.black,
+                    bottom: state.category.isNotEmpty
+                        ? TabBar(
+                            isScrollable: true,
+                            physics: const ClampingScrollPhysics(),
+                            indicatorSize: TabBarIndicatorSize.label,
+                            dividerColor: Colors.transparent,
+                            indicatorColor: Colors.transparent,
+                            controller: _tabController,
+                            tabAlignment: TabAlignment.start,
+                            key: const ValueKey('tab_bar'),
+                            onTap: (index) {
+                              baseBloc.add(OnTapChangeTabEvent(index: index));
+                            },
+                            tabs: state.category
+                                .map((category) => Tab(
+                                        child: Text(
+                                      category.name.toString(),
+                                      style: TextStyle(
+                                        color: state.currentIndex ==
+                                                state.category.indexOf(category)
+                                            ? Colors.white
+                                            : Colors.grey,
+                                        fontSize: 16,
+                                      ),
+                                    )))
+                                .toList(),
+                          )
+                        : null,
+                  ),
+                  body: Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(12),
+                            topLeft: Radius.circular(12))),
+                    child: TabBarView(
+                      physics: const NeverScrollableScrollPhysics(),
+                      key: const ValueKey('tab_bar_key'),
+                      controller: _tabController,
+                      children: state.category
+                          .map((category) => const CategoryScreen())
+                          .toList(), // Pass the category data to CategoryScreen
+                    ),
+                  ),
                 ),
-              ),
+                state.isLoading
+                    ? Container(
+                        color: Colors.black.withOpacity(0.6),
+                        child: const Center(
+                            child: CircularProgressIndicator(
+                          color: Colors.white,
+                        )),
+                      )
+                    : const SizedBox.shrink(),
+              ],
             ),
           ),
         );

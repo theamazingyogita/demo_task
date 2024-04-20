@@ -31,7 +31,7 @@ class TaskSelectionScreen extends StatelessWidget {
                   fixedSize: Size.fromWidth(MediaQuery.of(context).size.width)),
               child: const Text('Task 1'),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                   fixedSize: Size.fromWidth(MediaQuery.of(context).size.width)),

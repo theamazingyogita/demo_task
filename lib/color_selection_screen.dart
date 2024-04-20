@@ -10,17 +10,13 @@ class ColorSelectionScreen extends StatefulWidget {
 }
 
 class _ColorSelectionScreenState extends State<ColorSelectionScreen> {
-  late TextEditingController textEditingController;
-
   @override
   void initState() {
-    textEditingController = TextEditingController();
     super.initState();
   }
 
   @override
   void dispose() {
-    textEditingController.dispose();
     super.dispose();
   }
 

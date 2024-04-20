@@ -1,12 +1,12 @@
 import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:yogita_agarwal_task_impero_it/base_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:yogita_agarwal_task_impero_it/base_model.dart';
 
 part 'base_event.dart';
-
 part 'base_state.dart';
 
 class BaseBloc extends Bloc<BaseEvent, BaseState> {
@@ -32,6 +32,7 @@ class BaseBloc extends Bloc<BaseEvent, BaseState> {
 
   void _mapGetBaseScreenDataEventToState(
       GetBaseScreenDataEvent event, Emitter<BaseState> emit) async {
+    emit(state.copyWith(isLoading: true));
     const url = 'http://esptiles.imperoserver.in/api/API/Product/DashBoard';
     final Map<String, dynamic> requestBody = {
       "CategoryId": 0,
@@ -50,10 +51,10 @@ class BaseBloc extends Bloc<BaseEvent, BaseState> {
     );
 
     if (response.statusCode == 200) {
+      emit(state.copyWith(isLoading: false));
       BaseModel baseModel = BaseModel.fromJson(jsonDecode(response.body));
       emit(state.copyWith(
           baseModel: baseModel, category: baseModel.result?.category));
-      print("got state.category[0].id:::${state.category[0].id}");
       add(GetCategoryDataEvent(categoryId: state.category[0].id ?? 0));
     } else {
       throw Exception('Failed to load data');
@@ -68,6 +69,7 @@ class BaseBloc extends Bloc<BaseEvent, BaseState> {
 
   void _mapGetCategoryDataEventToState(
       GetCategoryDataEvent event, Emitter<BaseState> emit) async {
+    emit(state.copyWith(isLoading: true));
     const url = 'http://esptiles.imperoserver.in/api/API/Product/DashBoard';
     final Map<String, dynamic> requestBody = {
       "CategoryId": event.categoryId,
@@ -83,6 +85,7 @@ class BaseBloc extends Bloc<BaseEvent, BaseState> {
     );
 
     if (response.statusCode == 200) {
+      emit(state.copyWith(isLoading: false));
       BaseModel baseModel = BaseModel.fromJson(jsonDecode(response.body));
       final List<SubCategories> subCategoryList = state.subCategories.toList();
       final List<Category> categoryList = state.category.toList();
